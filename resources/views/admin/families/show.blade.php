@@ -482,32 +482,18 @@
                             .find(Boolean)
                         : null;
 
-                    if (spousePair && spousePair.a && spousePair.b) {
-                        const pairCenter = coupleCenterByPair.get(spousePair.key);
-                        const aBottomY = spousePair.a.y + (spousePair.a.height / 2);
-                        const bBottomY = spousePair.b.y + (spousePair.b.height / 2);
-                        const hubY = Math.max(aBottomY, bBottomY) + 10;
-
-                        parentLinksLayer.append('line')
-                            .attr('x1', spousePair.a.x)
-                            .attr('y1', aBottomY)
-                            .attr('x2', pairCenter ? pairCenter.x : ((spousePair.a.x + spousePair.b.x) / 2))
-                            .attr('y2', hubY)
-                            .attr('stroke', '#9ca3af')
-                            .attr('stroke-width', 2)
-                            .attr('fill', 'none');
-
-                        parentLinksLayer.append('line')
-                            .attr('x1', spousePair.b.x)
-                            .attr('y1', bBottomY)
-                            .attr('x2', pairCenter ? pairCenter.x : ((spousePair.a.x + spousePair.b.x) / 2))
-                            .attr('y2', hubY)
-                            .attr('stroke', '#9ca3af')
-                            .attr('stroke-width', 2)
-                            .attr('fill', 'none');
-
-                        startX = pairCenter ? pairCenter.x : ((spousePair.a.x + spousePair.b.x) / 2);
-                        startY = hubY;
+                    if (parents.length >= 2) {
+                        if (spousePair && spousePair.a && spousePair.b) {
+                            const pairCenter = coupleCenterByPair.get(spousePair.key);
+                            startX = pairCenter ? pairCenter.x : ((spousePair.a.x + spousePair.b.x) / 2);
+                            startY = pairCenter ? pairCenter.y : ((spousePair.a.y + spousePair.b.y) / 2);
+                        } else {
+                            const sortedParents = [...parents].sort((left, right) => left.x - right.x);
+                            const leftParent = sortedParents[0];
+                            const rightParent = sortedParents[1] ?? sortedParents[0];
+                            startX = (leftParent.x + rightParent.x) / 2;
+                            startY = (leftParent.y + rightParent.y) / 2;
+                        }
                     }
 
                     const childTopY = child.y - (child.height / 2);
